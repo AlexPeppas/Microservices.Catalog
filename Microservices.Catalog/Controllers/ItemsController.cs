@@ -1,5 +1,4 @@
 ﻿using Microservices.Catalog.Dtos;
-using Microservices.Catalog.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microservices.Catalog;
 using Microservices.Catalog.Entities;
-using Microservices.Catalog.Interfaces;
+using Microservices.Common.Interfaces;
 
 namespace Microservices.Catalog.Controllers
 {

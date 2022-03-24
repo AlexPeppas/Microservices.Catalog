@@ -1,8 +1,6 @@
 using Microservices.Catalog.Entities;
-using Microservices.Catalog.Extensions;
-using Microservices.Catalog.Interfaces;
-using Microservices.Catalog.Repository;
-using Microservices.Catalog.Settings;
+using Microservices.Common.Extensions;
+using Microservices.Common.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
