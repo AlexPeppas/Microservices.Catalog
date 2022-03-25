@@ -21,7 +21,7 @@ namespace Microservices.Catalog.Controllers
             this.repository = repository;
         }
 
-        [HttpGet]
+        [HttpGet(Name ="getAllItems")]
         public async Task<IEnumerable<ItemDto>> GetAsync()
         {
 
