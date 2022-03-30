@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microservices.Catalog;
 using Microservices.Catalog.Entities;
 using Microservices.Common.Interfaces;
+using MassTransit;
+using static Microservices.Contracts.CatalogContracts;
 
 namespace Microservices.Catalog.Controllers
 {
@@ -15,10 +17,14 @@ namespace Microservices.Catalog.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly IRepository<Item> repository;
+        private readonly IPublishEndpoint publishEndpoint;
 
-        public ItemsController(IRepository<Item> repository)
+        private static int requestCounterSimulator = 0;
+
+        public ItemsController(IRepository<Item> repository, IPublishEndpoint publishEndpoint)
         {
             this.repository = repository;
+            this.publishEndpoint = publishEndpoint;
         }
 
         [HttpGet(Name ="getAllItems")]
@@ -28,6 +34,26 @@ namespace Microservices.Catalog.Controllers
             var items = await repository.GetAllAsync();
             
             return items.Select(it=>it.ToDtoConverter());
+        }
+
+        [HttpGet(Name = "getAllItems")]
+        public async Task<ActionResult<IEnumerable<ItemDto>>> GetAsyncCircuitBreakerSimulator()
+        {
+            requestCounterSimulator++;
+            if (requestCounterSimulator <= 2)
+            {
+                Console.WriteLine($"Request {requestCounterSimulator} Delaying..");
+                await Task.Delay(TimeSpan.FromSeconds(10));
+            }
+
+            if (requestCounterSimulator <= 4)
+            {
+                Console.WriteLine($"Request {requestCounterSimulator} 500 Internal Server Error..");
+                return StatusCode(500);
+            }
+            var items = await repository.GetAllAsync();
+
+            return Ok(items.Select(it => it.ToDtoConverter()));
         }
 
         [HttpGet("{id}")]
@@ -54,6 +80,8 @@ namespace Microservices.Catalog.Controllers
 
             await repository.InsertAsync(item);
 
+            await publishEndpoint.Publish(new InsertedItemDto(item.Id,item.Name,item.Description));
+
             return CreatedAtAction(nameof(GetByIdAsync), new { Id = item.Id }, item);
 
         }
@@ -76,6 +104,8 @@ namespace Microservices.Catalog.Controllers
 
             await repository.UpdateAsync(item);
     
+            await publishEndpoint.Publish(new UpdatedItemDto(item.Id, item.Name, item.Description));
+
             return NoContent();
         }
 
@@ -88,6 +118,8 @@ namespace Microservices.Catalog.Controllers
 
             await repository.DeleteAsync(id);
 
+            await publishEndpoint.Publish(new DeletedItemDto(id));
+            
             return NoContent();
         }
     }

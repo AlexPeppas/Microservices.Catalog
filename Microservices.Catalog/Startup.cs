@@ -23,8 +23,6 @@ namespace Microservices.Catalog
 {
     public class Startup
     {
-        private ServiceSettings serviceSettings;
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
