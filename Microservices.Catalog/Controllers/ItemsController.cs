@@ -26,7 +26,7 @@ namespace Microservices.Catalog.Controllers
             this.repository = repository;
             this.publishEndpoint = publishEndpoint;
         }
-
+        
         [HttpGet(Name ="getAllItems")]
         public async Task<IEnumerable<ItemDto>> GetAsync()
         {
@@ -36,7 +36,7 @@ namespace Microservices.Catalog.Controllers
             return items.Select(it=>it.ToDtoConverter());
         }
 
-        [HttpGet(Name = "getAllItems")]
+        /*[HttpGet(Name = "getAllItemsCircuitBreaker")]
         public async Task<ActionResult<IEnumerable<ItemDto>>> GetAsyncCircuitBreakerSimulator()
         {
             requestCounterSimulator++;
@@ -55,6 +55,7 @@ namespace Microservices.Catalog.Controllers
 
             return Ok(items.Select(it => it.ToDtoConverter()));
         }
+        */
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemDto>> GetByIdAsync(Guid id)

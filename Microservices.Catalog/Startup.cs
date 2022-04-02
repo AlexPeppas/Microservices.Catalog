@@ -1,4 +1,8 @@
+using MassTransit;
+using MassTransit.AspNetCoreIntegration;
+using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microservices.Catalog.Entities;
+using Microservices.Catalog.Settings;
 using Microservices.Common.Extensions;
 using Microservices.Common.Settings;
 using Microsoft.AspNetCore.Builder;
@@ -38,6 +42,18 @@ namespace Microservices.Catalog
             //extend MongoRegistration and MongoRepositoy,IRepository singleton mapping so you can clean the StartUp class
             services.AddMongo()
                     .AddMongoRepository<Item>("Items");
+
+            //Configure MassTransit to use RabbitMQ
+            services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, configurator) =>
+               {
+                   var rabMqSettings = Configuration.GetSection(nameof(RabbitMQSettings)).Get<RabbitMQSettings>();
+                   configurator.Host(rabMqSettings.Host);
+                   configurator.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(serviceSettings.ServiceName, false));
+
+               });
+            });
 
             services.AddControllers(options =>
             {
