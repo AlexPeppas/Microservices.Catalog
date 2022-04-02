@@ -37,7 +37,7 @@ namespace Microservices.Catalog
 
             //extend MongoRegistration and MongoRepositoy,IRepository singleton mapping so you can clean the StartUp class
             services.AddMongo()
-                    .AddMongoRepository<Item>("Items")
+                    .AddMongoRepository<Item>("CatalogTotalItems")
                     .AddMassTransitRabbitMQ();
             //Configure MassTransit to use RabbitMQ
 
