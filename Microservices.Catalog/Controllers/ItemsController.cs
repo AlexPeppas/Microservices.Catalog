@@ -19,7 +19,7 @@ namespace Microservices.Catalog.Controllers
         private readonly IRepository<Item> repository;
         private readonly IPublishEndpoint publishEndpoint;
 
-        private static int requestCounterSimulator = 0;
+        
 
         public ItemsController(IRepository<Item> repository, IPublishEndpoint publishEndpoint)
         {
@@ -36,7 +36,10 @@ namespace Microservices.Catalog.Controllers
             return items.Select(it=>it.ToDtoConverter());
         }
 
-        /*[HttpGet(Name = "getAllItemsCircuitBreaker")]
+        /*
+        private static int requestCounterSimulator = 0;
+        
+        [HttpGet(Name = "getAllItemsCircuitBreaker")]
         public async Task<ActionResult<IEnumerable<ItemDto>>> GetAsyncCircuitBreakerSimulator()
         {
             requestCounterSimulator++;
@@ -96,7 +99,7 @@ namespace Microservices.Catalog.Controllers
 
             var item = new Item
             {
-                Id = Guid.NewGuid(),
+                Id = id,
                 Name = request.Name,
                 Description = request.Description,
                 Price = request.Price,
