@@ -23,6 +23,9 @@ namespace Microservices.Catalog
 {
     public class Startup
     {
+        //Use in Configure() method to set CORS
+        private const string AllowedOriginSettings = "AllowedOrigin";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -62,6 +65,16 @@ namespace Microservices.Catalog
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Microservices.Catalog v1"));
+
+                //Add Cross Origin Requests to allow UI from different hosted web server calls.
+                app.UseCors(configure =>
+                {
+                    //retrieve from app.Development.Settings.json with AllowedOriginSettings const key from line 26 the allowed origins urls
+                    //allow and header (content-type etc.) and method (post,get etc.)
+                    configure.WithOrigins(Configuration[AllowedOriginSettings]) 
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
             }
 
             app.UseHttpsRedirection();
